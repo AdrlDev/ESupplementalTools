@@ -1,0 +1,19 @@
+In Memory of Frankie
+
+I once had a turtle named Frankie. He was an anonymous birthday gift. He was different from the other turtles I have seen. He had a dull, olive-gray color with streaks of yellow and brown. He had a funny, pointed, beak-like mouth. He also had two claws on each flipper. Finally, he had to live in seawater. I had to get a special aquarium for him because of this. But in spite
+
+Of his being different, I loved him very much. One day, while I was surfing on the Internet, I stumbled across the picture of a turtle that looked exactly like Frankie. I was shocked when I discovered that Frankie could be a Hawksbill turtle. I was even more shocked when I found out that the Hawksbill turtles were endangered!
+
+Why are they endangered? People kill them for their shells. Many find their shells with their unusual colors and designs attractive. People also hunt them for their meat. In many coun-tries, turtle meat is a delicacy. I wonder what turtle meat tastes like! They are also hunted for their eggs and some even kill them to make turtle soup. In Asian countries, the turtle is used as medicine. When people catch shrimp with nets, turtles are invariably trapped by the net and drown. Even if people don’t try to catch these turtles, they die because of the pollution of the ocean. We pollute the waters with garbage, nonbiodegradable objects, and even chemicals.
+
+The articles on the Internet also mentioned that Hawksbill turtles have an important role in the marine ecosystem. They are used as food by other animals in the ocean. The small turtles eat tiny animals while fish, sharks, and birds prey on young turtles. This type of turtle also feeds on sponges and other invertebrates. When it dislodges pieces from the surface of corals, reef fish are given the opportunity to feed. Hence, each fulfills its role in the ecosystem.
+
+I thought of returning him to the ocean. However, I had second thoughts. I had visions of him getting caught in the net of a fisherman and the fisherman not knowing he was an endan-gered turtle. Or, he could be caught by a bird like a pelican that feeds on the fish or animals in the ocean. Or, he could simply just get lost in the vast ocean. He was such a tiny, helpless turtle!
+
+So, instead, I sent the World Wildlife Fund a letter about Frankie. I waited and waited for a reply. One day, I finally received one. I was advised to donate Frankie to the World Wildlife Fund. I had mixed feelings about this. I was sad because I would miss him. I would miss seeing him every morning, buying turtle food and feeding him, and watching him swim. But in the end, I decided to give him up. Even my baby brother would miss him. My baby brother spends hours watching Frankie swim while drinking his milk from the bottle. But, at the same time, I was happy because he would be able to live in an environment suited to him. He would be given a chance to join other turtles like him. I understood that the World Wildlife Fund would breed him and thus help increase the chances of survival of the species. He would be able to make a contribution to the preservation of his own kind, which I think is far more important than my reasons for keeping him.
+
+After this incident, I became devoted to the welfare of the turtles. I sent e-mails to my friends and classmates. After all, they have an important role to play in conserving the ecosystem. If they did not exist, larger fish would lose a source of nutrition. In turn, people whose primary diet is fish would also suffer.
+
+Up to now, I still miss Frankie. But I learned that sometimes we need to give up some-thing we love for the greater good. I hope that while I miss Frankie, my act of giving him up has contributed to the survival of other Hawksbill turtles.
+
+Now, I have a pet goldfish. I often think of Frankie when I look at my goldfish.

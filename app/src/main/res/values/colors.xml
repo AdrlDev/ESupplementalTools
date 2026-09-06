@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand_navy">#0B2E63</color>
+    <color name="brand_teal">#0797A5</color>
+    <color name="brand_aqua">#18C3C8</color>
+    <color name="brand_background">#F8FCFD</color>
+    <color name="brand_text">#102A43</color>
+</resources>
