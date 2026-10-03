@@ -182,7 +182,9 @@ fun ESupplementalApp(
         }
     ) { innerPadding ->
         AppNavGraph(
-            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = innerPadding.calculateBottomPadding()),
             navController = navController,
             startDestination = startDest
         )

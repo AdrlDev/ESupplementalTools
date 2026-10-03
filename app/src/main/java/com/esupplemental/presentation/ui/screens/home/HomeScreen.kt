@@ -26,6 +26,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
     onSongsClick: () -> Unit,
     onStoriesClick: () -> Unit,
+    onPoemsClick: () -> Unit,
     onNoteToolClick: () -> Unit,
     onGameClick: () -> Unit
 ) {
@@ -35,6 +36,7 @@ fun HomeScreen(
         state = state,
         onSongsClick = onSongsClick,
         onStoriesClick = onStoriesClick,
+        onPoemsClick = onPoemsClick,
         onNoteToolClick = onNoteToolClick,
         onGameClick = onGameClick
     )
@@ -45,6 +47,7 @@ fun HomeScreenContent(
     state: HomeUiState,
     onSongsClick: () -> Unit,
     onStoriesClick: () -> Unit,
+    onPoemsClick: () -> Unit,
     onNoteToolClick: () -> Unit,
     onGameClick: () -> Unit
 ) {
@@ -95,6 +98,14 @@ fun HomeScreenContent(
             )
             Spacer(Modifier.height(spacing.small))
             ActivityCard(
+                title = "Poems",
+                description = "Listen to poems and answer questions",
+                icon = Icons.Rounded.AutoStories,
+                containerColor = colorScheme.tertiary,
+                onClick = onPoemsClick
+            )
+            Spacer(Modifier.height(spacing.small))
+            ActivityCard(
                 title = "Note-Taking Tool",
                 description = "Organize your ideas with structured notes",
                 icon = Icons.Rounded.Edit,
@@ -126,6 +137,7 @@ fun HomeScreenPreview() {
             state = state,
             onSongsClick = {},
             onStoriesClick = {},
+            onPoemsClick = {},
             onNoteToolClick = {},
             onGameClick = {}
         )

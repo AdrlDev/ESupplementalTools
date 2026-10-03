@@ -16,10 +16,6 @@ val Quicksand = FontFamily(
     Font(R.font.quicksand_bold, FontWeight.Bold)
 )
 
-val SharkBit = FontFamily(
-    Font(R.font.sharkbit)
-)
-
 /**
  * Material 3 Typography system.
  * 
@@ -31,20 +27,20 @@ val SharkBit = FontFamily(
 val AppTypography = Typography(
     // ── DISPLAY (Large, Decorative) ──────────────────────────────────────────
     displayLarge = TextStyle(
-        fontFamily = SharkBit,
+        fontFamily = Quicksand,
         fontWeight = FontWeight.Bold,
         fontSize = 42.sp,
         lineHeight = 44.sp,
         letterSpacing = (-1).sp
     ),
     displayMedium = TextStyle(
-        fontFamily = SharkBit,
+        fontFamily = Quicksand,
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
         lineHeight = 36.sp
     ),
     displaySmall = TextStyle(
-        fontFamily = SharkBit,
+        fontFamily = Quicksand,
         fontWeight = FontWeight.Bold,
         fontSize = 28.sp,
         lineHeight = 32.sp
@@ -52,19 +48,19 @@ val AppTypography = Typography(
 
     // ── HEADLINE (Semi-Decorative) ───────────────────────────────────────────
     headlineLarge = TextStyle(
-        fontFamily = SharkBit,
+        fontFamily = Quicksand,
         fontWeight = FontWeight.SemiBold,
         fontSize = 24.sp,
         lineHeight = 30.sp
     ),
     headlineMedium = TextStyle(
-        fontFamily = SharkBit,
+        fontFamily = Quicksand,
         fontWeight = FontWeight.SemiBold,
         fontSize = 20.sp,
         lineHeight = 26.sp
     ),
     headlineSmall = TextStyle(
-        fontFamily = SharkBit,
+        fontFamily = Quicksand,
         fontWeight = FontWeight.SemiBold,
         fontSize = 18.sp,
         lineHeight = 24.sp

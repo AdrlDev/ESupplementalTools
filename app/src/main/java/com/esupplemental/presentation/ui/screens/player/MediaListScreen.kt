@@ -42,6 +42,7 @@ fun MediaListScreen(
     LaunchedEffect(type) { viewModel.loadListForType(type) }
     val state by viewModel.uiState.collectAsState()
     val isSong = type == MediaType.SONG
+    val isPoem = type == MediaType.POEM
     val headerColor = if (isSong) MaterialTheme.colorScheme.primary
     else MaterialTheme.colorScheme.secondary
 
@@ -51,6 +52,7 @@ fun MediaListScreen(
         MediaListContent(
             headerColor = headerColor,
             isSong = isSong,
+            isPoem = isPoem,
             searchQuery = state.searchQuery,
             filteredList = state.filteredList,
             onSearchChange = { viewModel.onSearchQueryChange(it) },
@@ -63,6 +65,7 @@ fun MediaListScreen(
 @Composable
 fun MediaListContent(
     isSong: Boolean,
+    isPoem: Boolean,
     headerColor: Color,
     searchQuery: String,
     filteredList: List<MediaItem>,
@@ -72,9 +75,9 @@ fun MediaListContent(
 ) {
     val onHeader = if (isSong) MaterialTheme.colorScheme.onPrimary
     else MaterialTheme.colorScheme.onSecondary
-    val listLabel = if (isSong) "Songs" else "Stories"
-    val instructionText = if (isSong) "Choose a song to listen" else "Choose a story to read"
-    val searchHint = if (isSong) "Search songs…" else "Search stories…"
+    val listLabel = when { isSong -> "Songs"; isPoem -> "Poems"; else -> "Stories" }
+    val instructionText = when { isSong -> "Choose a song to listen"; isPoem -> "Choose a poem to read"; else -> "Choose a story to read" }
+    val searchHint = when { isSong -> "Search songs…"; isPoem -> "Search poems…"; else -> "Search stories…" }
 
     var searchVisible by remember { mutableStateOf(false) }
     val keyboard = LocalSoftwareKeyboardController.current
@@ -235,6 +238,7 @@ private fun MediaListSongsPreview() {
     ESupplementalTheme {
         MediaListContent(
             isSong = true,
+            isPoem = false,
             headerColor = MaterialTheme.colorScheme.primary,
             searchQuery = "", onSearchChange = {},
             filteredList = emptyList(),
@@ -252,6 +256,7 @@ private fun MediaListStoriesDarkPreview() {
     ESupplementalTheme(darkTheme = true) {
         MediaListContent(
             isSong = false,
+            isPoem = false,
             headerColor = MaterialTheme.colorScheme.secondary,
             searchQuery = "Patintero", onSearchChange = {},
             filteredList = emptyList(),

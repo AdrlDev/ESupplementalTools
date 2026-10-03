@@ -2,6 +2,7 @@ package com.esupplemental.navigation
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -14,6 +15,7 @@ import com.esupplemental.data.model.MediaType
 import com.esupplemental.presentation.ui.screens.auth.LoginScreen
 import com.esupplemental.presentation.ui.screens.auth.RegisterScreen
 import com.esupplemental.presentation.ui.screens.exercise.StoryExerciseScreen
+import com.esupplemental.presentation.ui.screens.exercise.SongExerciseScreen
 import com.esupplemental.presentation.ui.screens.game.GameScreen
 import com.esupplemental.presentation.ui.screens.game.easy.character_quest.CharacterQuestScreen
 import com.esupplemental.presentation.ui.screens.game.easy.word_master.ListenSlapScreen
@@ -48,7 +50,7 @@ fun AppNavGraph(
     val noteViewModel: NoteViewModel = koinViewModel()
 
     NavHost(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         navController = navController,
         startDestination = startDestination,
         enterTransition = {
@@ -105,6 +107,7 @@ fun AppNavGraph(
             HomeScreen(
                 onSongsClick = { navController.navigate("media_list/song") },
                 onStoriesClick = { navController.navigate("media_list/story") },
+                onPoemsClick = { navController.navigate("media_list/poem") },
                 onNoteToolClick = {
                     navController.navigate(Screen.NoteList.route)
                 },
@@ -193,6 +196,7 @@ fun AppNavGraph(
                 noteViewModel = noteViewModel,
                 onSongClick = { navController.navigate(Screen.SongPlayer.createRoute(it)) },
                 onStoryClick = { navController.navigate(Screen.StoryPlayer.createRoute(it)) },
+                onPoemClick = { navController.navigate(Screen.PoemPlayer.createRoute(it)) },
                 onNoteClick = { navController.navigate(Screen.NoteTaking.createRoute(it)) }
             )
         }
@@ -235,15 +239,20 @@ fun AppNavGraph(
 
         composable("media_list/{type}") { backStack ->
             val typeArg = backStack.arguments?.getString("type") ?: "song"
-            val type = if (typeArg == "song") MediaType.SONG else MediaType.STORY
+            val type = when (typeArg) {
+                "song" -> MediaType.SONG
+                "poem" -> MediaType.POEM
+                else -> MediaType.STORY
+            }
 
             MediaListScreen(
                 type = type,
                 onItemClick = {
-                    val route = if (type == MediaType.SONG)
-                        Screen.SongPlayer.createRoute(it)
-                    else
-                        Screen.StoryPlayer.createRoute(it)
+                    val route = when (type) {
+                        MediaType.SONG -> Screen.SongPlayer.createRoute(it)
+                        MediaType.POEM -> Screen.PoemPlayer.createRoute(it)
+                        MediaType.STORY -> Screen.StoryPlayer.createRoute(it)
+                    }
                     navController.navigate(route)
                 },
                 onBack = { navController.popBackStack() } // Pass the missing parameter here
@@ -254,12 +263,32 @@ fun AppNavGraph(
 
         composable(
             route = Screen.SongPlayer.route,
-            arguments = listOf(navArgument("mediaId") { type = NavType.StringType })
+            arguments = listOf(navArgument("mediaId") { type = NavType.StringType }),
+            enterTransition = { fadeIn(tween(180)) },
+            exitTransition = { fadeOut(tween(180)) },
+            popEnterTransition = { fadeIn(tween(180)) },
+            popExitTransition = { fadeOut(tween(180)) }
         ) { backStack ->
             val mediaId = backStack.arguments?.getString("mediaId") ?: return@composable
             PlayerScreen(
                 mediaId = mediaId,
-                onStartExercise = null,
+                onStartExercise = { navController.navigate(Screen.SongExercise.createRoute(it)) },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Screen.SongExercise.route,
+            arguments = listOf(navArgument("mediaId") { type = NavType.StringType })
+        ) { backStack ->
+            val mediaId = backStack.arguments?.getString("mediaId") ?: return@composable
+            SongExerciseScreen(
+                mediaId = mediaId,
+                onViewResults = { score, total, resultId ->
+                    navController.navigate(
+                        Screen.QuizResult.createRoute(score, total, resultId, mediaId, MediaType.SONG)
+                    )
+                },
                 onBack = { navController.popBackStack() }
             )
         }
@@ -268,12 +297,32 @@ fun AppNavGraph(
 
         composable(
             route = Screen.StoryPlayer.route,
-            arguments = listOf(navArgument("mediaId") { type = NavType.StringType })
+            arguments = listOf(navArgument("mediaId") { type = NavType.StringType }),
+            enterTransition = { fadeIn(tween(180)) },
+            exitTransition = { fadeOut(tween(180)) },
+            popEnterTransition = { fadeIn(tween(180)) },
+            popExitTransition = { fadeOut(tween(180)) }
         ) { backStack ->
             val mediaId = backStack.arguments?.getString("mediaId") ?: return@composable
             PlayerScreen(
                 mediaId = mediaId,
                 onStartExercise = { navController.navigate(Screen.StoryExercise.createRoute(it)) },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Screen.PoemPlayer.route,
+            arguments = listOf(navArgument("mediaId") { type = NavType.StringType }),
+            enterTransition = { fadeIn(tween(180)) },
+            exitTransition = { fadeOut(tween(180)) },
+            popEnterTransition = { fadeIn(tween(180)) },
+            popExitTransition = { fadeOut(tween(180)) }
+        ) { backStack ->
+            val mediaId = backStack.arguments?.getString("mediaId") ?: return@composable
+            PlayerScreen(
+                mediaId = mediaId,
+                onStartExercise = { navController.navigate(Screen.PoemExercise.createRoute(it)) },
                 onBack = { navController.popBackStack() }
             )
         }
@@ -294,6 +343,20 @@ fun AppNavGraph(
                             mediaId
                         )
                     )
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Screen.PoemExercise.route,
+            arguments = listOf(navArgument("mediaId") { type = NavType.StringType })
+        ) { backStack ->
+            val mediaId = backStack.arguments?.getString("mediaId") ?: return@composable
+            StoryExerciseScreen(
+                mediaId = mediaId,
+                onViewResults = { score, total, resultId ->
+                    navController.navigate(Screen.QuizResult.createRoute(score, total, resultId, mediaId, MediaType.POEM))
                 },
                 onBack = { navController.popBackStack() }
             )
@@ -321,21 +384,28 @@ fun AppNavGraph(
                 navArgument("score") { type = NavType.IntType },
                 navArgument("total") { type = NavType.IntType },
                 navArgument("resultId") { type = NavType.LongType },
-                navArgument("mediaId") { type = NavType.StringType }
+                navArgument("mediaId") { type = NavType.StringType },
+                navArgument("type") { type = NavType.StringType; defaultValue = MediaType.STORY.name }
             )
         ) { backStack ->
             val score = backStack.arguments?.getInt("score") ?: 0
             val total = backStack.arguments?.getInt("total") ?: 0
             val resultId = backStack.arguments?.getLong("resultId") ?: -1L
             val mediaId = backStack.arguments?.getString("mediaId") ?: return@composable
+            val exerciseType = backStack.arguments?.getString("type") ?: MediaType.STORY.name
 
             QuizResultScreen(
                 score = score,
                 total = total,
                 resultId = resultId,
                 onRetry = {
-                    navController.navigate(Screen.StoryExercise.createRoute(mediaId)) {
-                        popUpTo(Screen.StoryExercise.route) { inclusive = true }
+                    val retryRoute = when (exerciseType) {
+                        MediaType.SONG.name -> Screen.SongExercise.createRoute(mediaId)
+                        MediaType.POEM.name -> Screen.PoemExercise.createRoute(mediaId)
+                        else -> Screen.StoryExercise.createRoute(mediaId)
+                    }
+                    navController.navigate(retryRoute) {
+                        popUpTo(navController.currentDestination?.route ?: Screen.QuizResult.route) { inclusive = true }
                         launchSingleTop = true
                     }
                 },

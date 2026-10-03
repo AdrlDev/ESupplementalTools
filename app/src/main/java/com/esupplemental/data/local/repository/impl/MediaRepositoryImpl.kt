@@ -18,6 +18,7 @@ import com.esupplemental.domain.model.game.StoryGameContext
 import com.esupplemental.domain.usecases.media.ProcessTranscriptUseCase
 import com.esupplemental.domain.utils.ErrorMapper
 import com.esupplemental.domain.utils.FinalData
+import com.esupplemental.domain.utils.PoemActivityFactory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.Dispatchers
@@ -63,12 +64,12 @@ class MediaRepositoryImpl(
 
     override suspend fun getStoryContext(mediaId: String): StoryGameContext? {
         val mediaItem = getMediaDetail(mediaId) ?: return null
-        if (mediaItem.type != MediaType.STORY) return null
+        if (mediaItem.type != MediaType.STORY && mediaItem.type != MediaType.POEM) return null
 
         val audioStory = mediaDao.getAudioStoryByMediaId(mediaId)?.toDomainModel()
         
         // Resolve transcript text
-        val transcriptText = try {
+        val loadedTranscript = try {
             if (mediaItem.transcript.endsWith(".md")) {
                 storyAssetReader(mediaItem.transcript)
             } else {
@@ -76,6 +77,12 @@ class MediaRepositoryImpl(
             }
         } catch (_: Exception) {
             mediaItem.transcript
+        }
+
+        val transcriptText = if (mediaItem.type == MediaType.POEM) {
+            PoemActivityFactory.extractTranscript(loadedTranscript)
+        } else {
+            loadedTranscript
         }
 
         val chunks = ProcessTranscriptUseCase().invoke(transcriptText)
@@ -96,6 +103,9 @@ class MediaRepositoryImpl(
 
     override suspend fun getStoryActivity(mediaId: String): StoryActivity? =
         mediaDao.getStoryActivity(mediaId)?.toDomainModel()
+
+    override suspend fun getSongActivity(mediaId: String): SongActivity? =
+        mediaDao.getSongActivity(mediaId)?.toDomainModel()
 
     override suspend fun getAllStoryActivities(): List<StoryActivity> =
         mediaDao.getAllStoryActivities().map { it.toDomainModel() }
@@ -261,19 +271,27 @@ class MediaRepositoryImpl(
      */
     override suspend fun seedInitialData() {
         seedMedia()
+        seedSongActivities()
         seedStoryActivities()
     }
 
     /** Seeds songs + stories into the media_items table. */
     private suspend fun seedMedia() {
-        val entities = (FinalData.songs + FinalData.stories).map { it.toEntity() }
+        val entities = (FinalData.songs + FinalData.stories + FinalData.poems).map { it.toEntity() }
         mediaDao.insertMedia(entities)
     }
 
     /** Seeds all story activities using the shared DataMapper. */
     private suspend fun seedStoryActivities() = withContext(Dispatchers.IO) {
         val entities: List<StoryActivityEntity> =
-            FinalData.storyActivities(storyAssetReader).values.map { it.toEntity() }
+            (FinalData.storyActivities(storyAssetReader) + FinalData.poemActivities(storyAssetReader))
+                .values.map { it.toEntity() }
         mediaDao.insertStoryActivities(entities)
+    }
+
+    /** Seeds song challenges parsed from the question and answer Markdown assets. */
+    private suspend fun seedSongActivities() = withContext(Dispatchers.IO) {
+        val entities = FinalData.songActivities(storyAssetReader).map { it.toEntity() }
+        mediaDao.insertSongActivities(entities)
     }
 }

@@ -22,6 +22,8 @@ import androidx.compose.material.icons.rounded.AutoStories
 import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.Gamepad
+import androidx.compose.material.icons.rounded.History
+import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material.icons.rounded.Quiz
 import androidx.compose.material.icons.rounded.RocketLaunch
 import androidx.compose.material.icons.rounded.Star
@@ -43,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.esupplemental.data.model.UserStats
+import com.esupplemental.data.model.MediaType
 import com.esupplemental.domain.model.game.GameDifficulty
 import com.esupplemental.domain.model.game.GameItem
 import com.esupplemental.presentation.state.ProgressUiState
@@ -79,6 +83,10 @@ fun ProgressScreenContent(state: ProgressUiState) {
     val spacing = MaterialTheme.spacing
     val colorScheme = MaterialTheme.colorScheme
 
+    val quizList = state.quizHistory.filterNotNull()
+    val storyQuizCount = quizList.count { it.type.equals(MediaType.STORY.name, ignoreCase = true) }
+    val songQuizCount = quizList.count { it.type.equals(MediaType.SONG.name, ignoreCase = true) }
+    val poemQuizCount = quizList.count { it.type.equals(MediaType.POEM.name, ignoreCase = true) }
     val totalPossiblePoints = state.quizHistory.filterNotNull().sumOf { it.total }
     val progressRatio = (if (totalPossiblePoints > 0) {
         stats.overallScore / totalPossiblePoints.toFloat()
@@ -105,7 +113,7 @@ fun ProgressScreenContent(state: ProgressUiState) {
         Spacer(Modifier.height(spacing.screenPadding))
 
         HeaderSection(
-            title = "My Progress 🏆",
+            title = "My Progress",
             subTitle = "You're crushing your learning goals!"
         )
 
@@ -178,48 +186,67 @@ fun ProgressScreenContent(state: ProgressUiState) {
 
         Spacer(Modifier.height(spacing.extraLarge))
 
-        // --- DETAILED STATISTICS GRID (NO SONGS CARD) ---
+        // --- DETAILED STATISTICS GRID ---
         SectionHeader(title = "HALL OF FAME")
         Spacer(Modifier.height(spacing.medium))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(spacing.small)
-        ) {
-            // Stories Read Card
-            StatCard(
-                value = "${stats.storiesCompleted}",
-                label = "Stories",
-                icon = Icons.Rounded.AutoStories,
-                backgroundColor = colorScheme.primary,
-                modifier = Modifier.weight(1f)
-            )
-            // Games Played Card
-            StatCard(
-                value = "${playedGames.size}/${state.games.size.coerceAtLeast(1)}",
-                label = "Games",
-                icon = Icons.Rounded.Gamepad,
-                backgroundColor = colorScheme.secondary,
-                modifier = Modifier.weight(1f)
-            )
-            // Total Stars Card
-            StatCard(
-                value = "$totalStars",
-                label = "Stars",
-                icon = Icons.Rounded.Star,
-                backgroundColor = RewardGold,
-                contentColor = Color(0xFF5A3E00),
-                modifier = Modifier.weight(1f)
-            )
-            // Quiz Average Card
-            StatCard(
-                value = "$averagePercentage%",
-                label = "Quiz Avg",
-                icon = Icons.Rounded.Quiz,
-                backgroundColor = ArcadeColors.Purple,
-                contentColor = Color.White,
-                modifier = Modifier.weight(1f)
-            )
+        Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(spacing.small)
+            ) {
+                StatCard(
+                    value = "$storyQuizCount",
+                    label = "Story Quizzes",
+                    icon = Icons.Rounded.AutoStories,
+                    backgroundColor = colorScheme.primary,
+                    modifier = Modifier.weight(1f)
+                )
+                StatCard(
+                    value = "$songQuizCount",
+                    label = "Song Quizzes",
+                    icon = Icons.Rounded.MusicNote,
+                    backgroundColor = colorScheme.secondary,
+                    modifier = Modifier.weight(1f)
+                )
+                StatCard(
+                    value = "$poemQuizCount",
+                    label = "Poem Quizzes",
+                    icon = Icons.Rounded.AutoStories,
+                    backgroundColor = colorScheme.tertiary,
+                    contentColor = Color.White,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(spacing.small)
+            ) {
+                StatCard(
+                    value = "${playedGames.size}/${state.games.size.coerceAtLeast(1)}",
+                    label = "Games",
+                    icon = Icons.Rounded.Gamepad,
+                    backgroundColor = ArcadeColors.Purple,
+                    contentColor = Color.White,
+                    modifier = Modifier.weight(1f)
+                )
+                StatCard(
+                    value = "$totalStars",
+                    label = "Stars",
+                    icon = Icons.Rounded.Star,
+                    backgroundColor = RewardGold,
+                    contentColor = Color(0xFF5A3E00),
+                    modifier = Modifier.weight(1f)
+                )
+                StatCard(
+                    value = "$averagePercentage%",
+                    label = "Quiz Avg",
+                    icon = Icons.Rounded.Quiz,
+                    backgroundColor = colorScheme.tertiary,
+                    contentColor = Color.White,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
 
         Spacer(Modifier.height(spacing.extraLarge))
@@ -300,18 +327,21 @@ fun ProgressScreenContent(state: ProgressUiState) {
         ) {
             ActivityFilterChip(
                 label = "All Activity",
+                icon = Icons.Rounded.History,
                 isSelected = selectedTab == 0,
                 onClick = { selectedTab = 0 },
                 modifier = Modifier.weight(1f)
             )
             ActivityFilterChip(
-                label = "🎮 Games (${playedGames.size})",
+                label = "Games (${playedGames.size})",
+                icon = Icons.Rounded.Gamepad,
                 isSelected = selectedTab == 1,
                 onClick = { selectedTab = 1 },
                 modifier = Modifier.weight(1f)
             )
             ActivityFilterChip(
-                label = "📝 Quizzes (${state.quizHistory.filterNotNull().size})",
+                label = "Quizzes (${state.quizHistory.filterNotNull().size})",
+                icon = Icons.Rounded.Quiz,
                 isSelected = selectedTab == 2,
                 onClick = { selectedTab = 2 },
                 modifier = Modifier.weight(1f)
@@ -320,7 +350,6 @@ fun ProgressScreenContent(state: ProgressUiState) {
 
         Spacer(Modifier.height(spacing.medium))
 
-        val quizList = state.quizHistory.filterNotNull()
         val showGames = (selectedTab == 0 || selectedTab == 1) && state.games.isNotEmpty()
         val showQuizzes = (selectedTab == 0 || selectedTab == 2) && quizList.isNotEmpty()
 
@@ -366,7 +395,7 @@ fun ProgressScreenContent(state: ProgressUiState) {
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "Complete stories and play learning games to see your stars and XP here! 🚀",
+                        text = "Complete stories and play learning games to see your stars and XP here!",
                         style = MaterialTheme.typography.bodyMedium,
                         color = colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
@@ -399,6 +428,7 @@ fun ProgressScreenContent(state: ProgressUiState) {
 @Composable
 private fun ActivityFilterChip(
     label: String,
+    icon: ImageVector,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -414,15 +444,26 @@ private fun ActivityFilterChip(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = if (isSelected) FontWeight.Black else FontWeight.Bold,
-                    fontSize = 11.sp
-                ),
-                color = if (isSelected) Color.White else colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(15.dp),
+                    tint = if (isSelected) Color.White else colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelMedium.copy(
+                        fontWeight = if (isSelected) FontWeight.Black else FontWeight.Bold,
+                        fontSize = 11.sp
+                    ),
+                    color = if (isSelected) Color.White else colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

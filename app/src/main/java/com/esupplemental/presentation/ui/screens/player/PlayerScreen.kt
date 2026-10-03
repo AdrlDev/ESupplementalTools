@@ -26,12 +26,7 @@ import com.esupplemental.presentation.ui.theme.ESupplementalTheme
 import com.esupplemental.presentation.ui.theme.spacing
 import com.esupplemental.presentation.viewmodel.PlayerViewModel
 import org.koin.androidx.compose.koinViewModel
-import androidx.compose.ui.Alignment
 import com.esupplemental.data.remote.model.StoryAudioStatus
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ErrorOutline
 
 @Composable
 fun PlayerScreen(
@@ -72,7 +67,7 @@ fun PlayerScreen(
         PlayerErrorState(
             message =
                 state.error
-                    ?: "Unable to prepare this story.",
+                    ?: "Unable to prepare the audio.",
             onBack = onBack
         )
 
@@ -337,105 +332,6 @@ fun PlayerScreenContent(
             onSeekMs = onSeekMs,
             onStartExercise = onStartExercise
         )
-    }
-}
-
-@Composable
-fun PlayerLoadingState(
-    isPreparingStory: Boolean
-) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        AppBackground {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(32.dp)
-            ) {
-                CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.primary,
-                    strokeWidth = 3.dp
-                )
-
-                Spacer(Modifier.height(24.dp))
-
-                Text(
-                    text = if (isPreparingStory) "Preparing your story..." else "Loading media...",
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-
-                if (isPreparingStory) {
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = "Preparing narration and word timing",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun PlayerErrorState(
-    message: String,
-    onBack: () -> Unit
-) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        AppBackground {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(32.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.ErrorOutline,
-                    contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = MaterialTheme.colorScheme.error
-                )
-
-                Spacer(Modifier.height(24.dp))
-
-                Text(
-                    text = "Unable to Load",
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-
-                Spacer(Modifier.height(8.dp))
-
-                Text(
-                    text = message,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(Modifier.height(32.dp))
-
-                Button(
-                    onClick = onBack,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary
-                    )
-                ) {
-                    Text("Go Back")
-                }
-            }
-        }
     }
 }
 

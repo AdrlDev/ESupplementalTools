@@ -35,6 +35,7 @@ class LibraryViewModel(
         selectedMediaType.value = when (page) {
             0 -> MediaType.SONG
             1 -> MediaType.STORY
+            2 -> MediaType.POEM
             else -> null
         }
     }

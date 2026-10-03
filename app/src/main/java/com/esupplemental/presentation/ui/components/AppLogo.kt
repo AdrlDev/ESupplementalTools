@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.esupplemental.R
 import com.esupplemental.presentation.ui.theme.ESupplementalTheme
-import com.esupplemental.presentation.ui.theme.SharkBit
+import com.esupplemental.presentation.ui.theme.Quicksand
 
 /** Official E-Supplemental logo. The source artwork is always rendered without cropping. */
 @Composable
@@ -64,7 +64,7 @@ fun AppLogo(
                         fontWeight = FontWeight.Black,
                         fontSize = (iconSize.value * 0.39f).sp
                     ),
-                    fontFamily = SharkBit
+                    fontFamily = Quicksand
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Surface(

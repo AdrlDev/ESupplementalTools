@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Bolt
+import androidx.compose.material.icons.rounded.AutoStories
+import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material.icons.rounded.Quiz
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarBorder
@@ -31,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.esupplemental.data.local.entity.QuizHistoryEntity
+import com.esupplemental.data.model.MediaType
 import com.esupplemental.domain.model.game.GameDifficulty
 import com.esupplemental.domain.model.game.GameItem
 import com.esupplemental.presentation.ui.theme.ArcadeColors
@@ -39,7 +42,7 @@ import com.esupplemental.presentation.ui.theme.RewardGold
 import com.esupplemental.presentation.ui.theme.spacing
 
 /**
- * An item representing a past story quiz result with playful sticker design.
+ * An item representing a past song or story quiz result with playful sticker design.
  */
 @Composable
 fun PlayfulQuizHistoryItem(
@@ -47,6 +50,9 @@ fun PlayfulQuizHistoryItem(
     modifier: Modifier = Modifier
 ) {
     val colorScheme = MaterialTheme.colorScheme
+    val quizType = runCatching {
+        MediaType.valueOf(item.type.uppercase())
+    }.getOrNull()
 
     val scorePercentage = if (item.total > 0) {
         (item.score.toFloat() / item.total.toFloat() * 100).toInt()
@@ -59,10 +65,10 @@ fun PlayfulQuizHistoryItem(
     }
 
     val feedbackText = when {
-        scorePercentage >= 90 -> "Super Star! 🌟"
-        scorePercentage >= 70 -> "Great Job! 🎯"
-        scorePercentage >= 50 -> "Good Effort! 👍"
-        else -> "Keep Going! 💪"
+        scorePercentage >= 90 -> "Super Star!"
+        scorePercentage >= 70 -> "Great Job!"
+        scorePercentage >= 50 -> "Good Effort!"
+        else -> "Keep Going!"
     }
 
     Card(
@@ -88,7 +94,11 @@ fun PlayfulQuizHistoryItem(
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
-                        imageVector = Icons.Rounded.Quiz,
+                        imageVector = when (quizType) {
+                            MediaType.SONG -> Icons.Rounded.MusicNote
+                            MediaType.STORY, MediaType.POEM -> Icons.Rounded.AutoStories
+                            null -> Icons.Rounded.Quiz
+                        },
                         contentDescription = null,
                         tint = colorScheme.primary,
                         modifier = Modifier.size(24.dp)
@@ -105,7 +115,12 @@ fun PlayfulQuizHistoryItem(
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
-                        text = "Story Quiz Quest",
+                        text = when (quizType) {
+                            MediaType.SONG -> "Song Quiz Challenge"
+                            MediaType.POEM -> "Poem Quiz Quest"
+                            MediaType.STORY -> "Story Quiz Quest"
+                            null -> "Quiz Challenge"
+                        },
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Black,
                             fontSize = 16.sp

@@ -1,3 +1,3 @@
 package com.esupplemental.data.model
 
-enum class MediaType { SONG, STORY }
+enum class MediaType { SONG, STORY, POEM }

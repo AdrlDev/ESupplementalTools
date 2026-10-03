@@ -57,7 +57,7 @@ class StoryExerciseViewModel(
             val playbackMedia = MediaItem(
                 id = id,
                 title = text,
-                type = MediaType.STORY,
+                type = _uiState.value.mediaType,
                 durationSeconds = 0,
                 audioUrl = audioStory.url
             )
@@ -78,10 +78,12 @@ class StoryExerciseViewModel(
             return@launch
         }
 
+        val mediaType = repository.getMediaDetail(mediaId)?.type ?: MediaType.STORY
         val activity = repository.getStoryActivity(mediaId)
         _uiState.update {
             it.copy(
                 mediaId = mediaId,
+                mediaType = mediaType,
                 activity = activity,
                 orderedEvents = activity?.reorderEvents?.shuffled() ?: emptyList(),
                 totalEvents = activity?.reorderEvents?.size ?: 0,
@@ -166,7 +168,7 @@ class StoryExerciseViewModel(
             val combinedScore = score + mcScore
             val combinedTotal = activity.reorderEvents.size + mcQuestions.size
 
-            val result = QuizResult(combinedScore, combinedTotal, userAnswers, correctAnswers, MediaType.STORY)
+            val result = QuizResult(combinedScore, combinedTotal, userAnswers, correctAnswers, state.mediaType)
             val saveResponse = quizRepository.saveQuizResult(result)
 
             saveResponse.onSuccess { resultId ->

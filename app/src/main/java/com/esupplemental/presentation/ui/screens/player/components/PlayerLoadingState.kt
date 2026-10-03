@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
@@ -13,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.esupplemental.presentation.ui.components.AppBackground
 
@@ -20,7 +22,7 @@ import com.esupplemental.presentation.ui.components.AppBackground
 fun PlayerLoadingState(
     isPreparingStory: Boolean
 ) {
-    AppBackground {
+    AppBackground(showBlobs = false) {
         Box(
             modifier =
                 Modifier.fillMaxSize(),
@@ -29,6 +31,7 @@ fun PlayerLoadingState(
         ) {
 
             Column(
+                modifier = Modifier.padding(horizontal = 24.dp),
                 horizontalAlignment =
                     Alignment.CenterHorizontally,
                 verticalArrangement =
@@ -37,8 +40,8 @@ fun PlayerLoadingState(
 
                 CircularProgressIndicator(
                     modifier =
-                        Modifier.size(48.dp),
-                    strokeWidth = 4.dp,
+                        Modifier.size(44.dp),
+                    strokeWidth = 3.dp,
                     color =
                         MaterialTheme
                             .colorScheme
@@ -52,14 +55,16 @@ fun PlayerLoadingState(
                 Text(
                     text =
                         if (isPreparingStory) {
-                            "Preparing your story..."
+                            "Preparing your audio..."
                         } else {
                             "Loading..."
                         },
                     style =
                         MaterialTheme
                             .typography
-                            .titleMedium
+                            .titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
                 )
 
                 if (isPreparingStory) {
@@ -78,7 +83,8 @@ fun PlayerLoadingState(
                         color =
                             MaterialTheme
                                 .colorScheme
-                                .onSurfaceVariant
+                                .onSurfaceVariant,
+                        textAlign = TextAlign.Center
                     )
                 }
             }

@@ -319,7 +319,7 @@ class MediaPlaybackManagerImpl(
                 _currentPositionSeconds.value = currentSec.coerceAtMost(effectiveDurationSeconds)
 
                 // ── Synchronization ──
-                if (type == MediaType.STORY) {
+                if (type == MediaType.STORY || type == MediaType.POEM) {
                     updateIndices(currentMs)
                 }
                 

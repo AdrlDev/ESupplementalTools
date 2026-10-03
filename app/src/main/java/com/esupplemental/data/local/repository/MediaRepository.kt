@@ -5,6 +5,7 @@ import com.esupplemental.data.model.AudioStory
 import com.esupplemental.data.model.MediaItem
 import com.esupplemental.data.model.MediaType
 import com.esupplemental.data.model.StoryActivity
+import com.esupplemental.data.model.SongActivity
 import kotlinx.coroutines.flow.Flow
 
 import com.esupplemental.domain.model.game.StoryGameContext
@@ -15,6 +16,7 @@ interface MediaRepository {
     suspend fun getMediaDetail(id: String): MediaItem?
     suspend fun getStoryContext(mediaId: String): StoryGameContext?
     suspend fun getStoryActivity(mediaId: String): StoryActivity?
+    suspend fun getSongActivity(mediaId: String): SongActivity?
     suspend fun getAllStoryActivities(): List<StoryActivity>
     suspend fun getStoriesForGame(limit: Int): List<MediaItem>
     suspend fun seedInitialData() // Used to inject your list below

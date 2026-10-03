@@ -44,6 +44,7 @@ fun LibraryScreen(
     noteViewModel: NoteViewModel = koinViewModel(),
     onSongClick: (String) -> Unit,
     onStoryClick: (String) -> Unit,
+    onPoemClick: (String) -> Unit,
     onNoteClick: (String) -> Unit
 ) {
     val noteState by noteViewModel.uiState.collectAsStateWithLifecycle()
@@ -55,6 +56,7 @@ fun LibraryScreen(
             notes = noteState.allNotes,
             onSongClick = onSongClick,
             onStoryClick = onStoryClick,
+            onPoemClick = onPoemClick,
             onNoteClick = onNoteClick,
             onPageChanged = libraryViewModel::selectPage
         )
@@ -68,6 +70,7 @@ fun LibraryScreenContent(
     notes: List<Note>,
     onSongClick: (String) -> Unit,
     onStoryClick: (String) -> Unit,
+    onPoemClick: (String) -> Unit,
     onNoteClick: (String) -> Unit,
     onPageChanged: (Int) -> Unit
 ) {
@@ -75,6 +78,7 @@ fun LibraryScreenContent(
         listOf(
             TabItem("Songs", Icons.Rounded.MusicNote, MediaType.SONG),
             TabItem("Stories", Icons.Rounded.AutoStories, MediaType.STORY),
+            TabItem("Poems", Icons.Rounded.AutoStories, MediaType.POEM),
             TabItem("Notes", Icons.AutoMirrored.Rounded.StickyNote2, null)
         )
     }
@@ -198,7 +202,13 @@ fun LibraryScreenContent(
                     onItemClick = onStoryClick
                 )
 
-                2 -> NotesLibraryTab(
+                2 -> MediaLibraryTab(
+                    items = pagedMedia,
+                    accentColor = MaterialTheme.colorScheme.tertiary,
+                    onItemClick = onPoemClick
+                )
+
+                3 -> NotesLibraryTab(
                     notes = notes,
                     onNoteClick = onNoteClick
                 )

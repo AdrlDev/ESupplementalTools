@@ -164,3 +164,14 @@ Prefer:
 MaterialTheme.colorScheme
 MaterialTheme.typography
 MaterialTheme.shapes
+
+## Repository context
+
+Before making feature changes, read `docs/context/PROJECT_OVERVIEW.md`, `docs/context/ARCHITECTURE.md`, and the relevant feature document. The context documents describe the current implementation, including known legacy paths and risks; source code remains the final authority.
+
+- Preserve current games, scoring, timers, progress, media IDs, audio behavior, navigation, and Room data unless the task explicitly changes them.
+- Trace UI → ViewModel → use case/repository → DAO/API/assets before editing.
+- Do not bypass repositories/use cases from Compose UI or create duplicate game/content logic.
+- Treat `audio_stories` as remote metadata/URL cache, not local offline audio.
+- Database changes require a migration review and must preserve existing user data.
+- Run targeted validation after modifications; the baseline JVM command is `./gradlew testDebugUnitTest`.

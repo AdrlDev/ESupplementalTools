@@ -1,5 +1,6 @@
 package com.esupplemental.data.remote
 
+import com.esupplemental.BuildConfig
 import com.esupplemental.data.remote.model.AudioStoryRequest
 import com.esupplemental.data.remote.model.AudioStoryResponse
 import retrofit2.Response
@@ -28,6 +29,6 @@ interface AudioStoryApi {
     ): Response<AudioStoryResponse>
 
     companion object {
-        const val BASE_URL = "https://aeserver.aesprt.com/"
+        val BASE_URL = if(BuildConfig.ALLOW_GAME_PROGRESSION_BYPASS) "https://aeservertesting.aesprt.com" else "https://aeserver.aesprt.com/"
     }
 }

@@ -50,6 +50,7 @@ import com.esupplemental.presentation.viewmodel.PlayerViewModel
 import com.esupplemental.presentation.viewmodel.ProgressViewModel
 import com.esupplemental.presentation.viewmodel.QuizResultViewModel
 import com.esupplemental.presentation.viewmodel.StoryExerciseViewModel
+import com.esupplemental.presentation.viewmodel.SongExerciseViewModel
 import com.esupplemental.presentation.viewmodel.StoryOrderViewModel
 import com.esupplemental.presentation.viewmodel.CharacterQuestViewModel
 import com.esupplemental.domain.worker.AudioPrefetchWorker
@@ -156,6 +157,7 @@ val appModule = module {
     viewModel { LibraryViewModel(get()) }
     viewModel { PlayerViewModel(get(), get(), get(), get(), get()) }
     viewModel { StoryExerciseViewModel(get(), get(), get(), androidApplication()) }
+    viewModel { SongExerciseViewModel(get(), get()) }
     viewModel { QuizResultViewModel(get()) }
     viewModel { ProgressViewModel(get(), get(), get(), get(), get()) }
     viewModel { (gameId: String, mediaId: String?) ->

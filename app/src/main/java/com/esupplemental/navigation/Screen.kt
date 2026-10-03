@@ -6,6 +6,7 @@ import androidx.compose.material.icons.automirrored.rounded.ShowChart
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.esupplemental.data.model.MediaType
 
 sealed class Screen(val route: String) {
     // Bottom Nav Destinations
@@ -29,16 +30,31 @@ sealed class Screen(val route: String) {
     object StoryPlayer : Screen("story_player/{mediaId}") {
         fun createRoute(mediaId: String) = "story_player/$mediaId"
     }
+    object PoemPlayer : Screen("poem_player/{mediaId}") {
+        fun createRoute(mediaId: String) = "poem_player/$mediaId"
+    }
     object StoryExercise : Screen("story_exercise/{mediaId}") {
         fun createRoute(mediaId: String) = "story_exercise/$mediaId"
+    }
+    object PoemExercise : Screen("poem_exercise/{mediaId}") {
+        fun createRoute(mediaId: String) = "poem_exercise/$mediaId"
+    }
+    object SongExercise : Screen("song_exercise/{mediaId}") {
+        fun createRoute(mediaId: String) = "song_exercise/$mediaId"
     }
     object NoteTaking : Screen("note_taking/{noteId}") {
         fun createRoute(noteId: String = "new") = "note_taking/$noteId"
     }
     object NoteList : Screen("note_list")
-    object QuizResult : Screen("quiz_result/{score}/{total}/{resultId}/{mediaId}") {
-        fun createRoute(score: Int, total: Int, resultId: Long, mediaId: String): String {
-            return "quiz_result/$score/$total/$resultId/$mediaId"
+    object QuizResult : Screen("quiz_result/{score}/{total}/{resultId}/{mediaId}?type={type}") {
+        fun createRoute(
+            score: Int,
+            total: Int,
+            resultId: Long,
+            mediaId: String,
+            type: MediaType = MediaType.STORY
+        ): String {
+            return "quiz_result/$score/$total/$resultId/$mediaId?type=${type.name}"
         }
     }
     object GeneralSettings : Screen("general_settings")

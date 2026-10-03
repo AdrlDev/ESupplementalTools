@@ -1,10 +1,12 @@
 package com.esupplemental.presentation.state
 
 import com.esupplemental.data.model.StoryActivity
+import com.esupplemental.data.model.MediaType
 import com.esupplemental.data.model.game.StoryEvent
 
 data class StoryExerciseUiState(
     val mediaId: String = "",
+    val mediaType: MediaType = MediaType.STORY,
     val activity: StoryActivity? = null,
     val orderedEvents: List<StoryEvent> = emptyList(),   // user's current ordering
     val openEndedAnswers: Map<String, String> = emptyMap(),

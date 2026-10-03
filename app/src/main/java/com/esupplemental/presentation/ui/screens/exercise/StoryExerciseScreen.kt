@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.esupplemental.data.model.StoryActivity
+import com.esupplemental.data.model.MediaType
 import com.esupplemental.domain.utils.FinalData
 import com.esupplemental.domain.utils.StoryLoader
 import com.esupplemental.presentation.state.StoryExerciseUiState
@@ -177,7 +178,7 @@ fun StoryExerciseScreenContent(
                         Spacer(Modifier.width(8.dp))
                         Column {
                             Text(
-                                text = "Story Exercise",
+                                text = if (state.mediaType == MediaType.POEM) "Poem Exercise" else "Story Exercise",
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.ExtraBold,
                                     fontSize = 18.sp
@@ -257,7 +258,8 @@ fun StoryExerciseScreenContent(
                         )
                     }
 
-                    item { StoryDivider() }
+                    if (state.mediaType != MediaType.POEM) {
+                        item { StoryDivider() }
 
                     // ── Section 2: Reordering ──────────────────────────────
                     item {
@@ -311,6 +313,7 @@ fun StoryExerciseScreenContent(
                             onMoveUp = { onMoveUp(idx, idx - 1) },
                             onMoveDown = { onMoveDown(idx, idx + 1) }
                         )
+                    }
                     }
 
                     // ── Submit / Results ───────────────────────────────────

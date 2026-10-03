@@ -12,6 +12,7 @@ import com.esupplemental.domain.usecases.media.ProcessTranscriptUseCase
 import com.esupplemental.domain.model.media.StoryPage
 import com.esupplemental.domain.model.media.StoryChunk
 import com.esupplemental.domain.utils.StoryLoader
+import com.esupplemental.domain.utils.PoemActivityFactory
 import com.esupplemental.presentation.state.PlayerUiState
 import com.esupplemental.data.remote.model.StoryAudioStatus
 import com.esupplemental.data.remote.model.WordTiming
@@ -119,9 +120,9 @@ class PlayerViewModel(
                 /*
                  * Load transcript.
                  */
-                val transcriptContent =
+                val loadedTranscript =
                     if (
-                        item.type == MediaType.STORY &&
+                        (item.type == MediaType.STORY || item.type == MediaType.POEM) &&
                         item.transcript.endsWith(".md")
                     ) {
                         try {
@@ -136,11 +137,17 @@ class PlayerViewModel(
                         item.transcript
                     }
 
+                val transcriptContent = if (item.type == MediaType.POEM) {
+                    PoemActivityFactory.extractTranscript(loadedTranscript)
+                } else {
+                    loadedTranscript
+                }
+
                 /*
                  * Process transcript.
                  */
                 val chunks =
-                    if (item.type == MediaType.STORY) {
+                    if (item.type == MediaType.STORY || item.type == MediaType.POEM) {
                         processTranscriptUseCase(
                             transcriptContent
                         )
@@ -163,7 +170,7 @@ class PlayerViewModel(
                  * STORY AUDIO
                  * =====================================================
                  */
-                if (item.type == MediaType.STORY) {
+                if (item.type == MediaType.STORY || item.type == MediaType.POEM) {
 
                     _uiState.update {
                         it.copy(
