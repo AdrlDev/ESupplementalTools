@@ -20,6 +20,7 @@ data class MediaItemEntity(
     val thumbnailUrl: String? = null,
     val audioRes: Int = 0,
     val audioUrl: String? = null,
+    val videoUrl: String? = null,
     val transcript: String,
     val transcriptTl: String? = null,
     val moral: String? = null,

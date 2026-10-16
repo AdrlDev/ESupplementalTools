@@ -12,6 +12,8 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.rounded.Celebration
 import androidx.compose.material.icons.rounded.Lightbulb
+import androidx.compose.material.icons.rounded.Pause
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -47,7 +49,10 @@ fun FillBlankItem(
     correctAnswer: String,
     onAnswerChange: (String) -> Unit,
     itemNumber: Int = 1,
-    accentColor: Color = MaterialTheme.colorScheme.primary
+    accentColor: Color = MaterialTheme.colorScheme.primary,
+    onPlayAudio: (() -> Unit)? = null,
+    isAudioLoading: Boolean = false,
+    isAudioPlaying: Boolean = false
 ) {
     val spacing = MaterialTheme.spacing
     val colorScheme = MaterialTheme.colorScheme
@@ -137,6 +142,27 @@ fun FillBlankItem(
                             color = Color.White,
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
+                        if (onPlayAudio != null) {
+                            IconButton(
+                                onClick = onPlayAudio,
+                                enabled = !isAudioLoading,
+                                modifier = Modifier.size(34.dp)
+                            ) {
+                                if (isAudioLoading) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(17.dp),
+                                        color = Color.White,
+                                        strokeWidth = 2.dp
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = if (isAudioPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                                        contentDescription = if (isAudioPlaying) "Pause question audio" else "Play question audio",
+                                        tint = Color.White
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -116,28 +116,37 @@ class MediaRepositoryImpl(
     override suspend fun generateAudioForText(
         id: String,
         title: String?,
-        text: String
+        text: String,
+        forceRefresh: Boolean
     ): Result<AudioStory> {
         val generationLock = audioGenerationLocks.getOrPut(id) { Mutex() }
         return generationLock.withLock {
-            generateAudioForTextUnlocked(id, title, text)
+            generateAudioForTextUnlocked(id, title, text, forceRefresh)
         }
     }
 
     private suspend fun generateAudioForTextUnlocked(
         id: String,
         title: String?,
-        text: String
+        text: String,
+        forceRefresh: Boolean = false
     ): Result<AudioStory> = runCatching {
         // Check local cache first
         val localAudio = mediaDao.getAudioStoryByMediaId(id)
-        if (localAudio != null) {
+        if (localAudio != null && !forceRefresh) {
             // Return cache immediately. If it lacks words, the UI will still work (sentence fallback).
             return@runCatching localAudio.toDomainModel()
         }
 
         val apiKey = BuildConfig.APP_API_KEY
-        val request = AudioStoryRequest(id, title ?: text, text)
+        // A refresh uses a content-stable request ID so a stale server-side file
+        // under the original ID cannot be returned again after a worker refresh.
+        val requestId = if (forceRefresh) {
+            "${id}_audio_${text.hashCode().toUInt().toString(16)}"
+        } else {
+            id
+        }
+        val request = AudioStoryRequest(requestId, title ?: text, text)
         val response = audioStoryApi.generateAudioStory(apiKey, request)
 
         var data: AudioStoryResponse?
@@ -145,15 +154,15 @@ class MediaRepositoryImpl(
         if ((response.isSuccessful || response.code() == 202) && response.body() != null) {
             data = response.body()!!
             if (data.status == StoryAudioStatus.PROCESSING) {
-                data = pollForReadyStatus(id, apiKey)
+                data = pollForReadyStatus(requestId, apiKey)
             }
         } else if (response.code() == 409) {
             // 409 Conflict: Audio generation was already initiated or completed on the server for this mediaId.
-            val statusResponse = audioStoryApi.getAudioStoryStatus(apiKey, id)
+            val statusResponse = audioStoryApi.getAudioStoryStatus(apiKey, requestId)
             if (statusResponse.isSuccessful && statusResponse.body() != null) {
                 val currentStatus = statusResponse.body()!!
                 data = if (currentStatus.status == StoryAudioStatus.PROCESSING) {
-                    pollForReadyStatus(id, apiKey)
+                    pollForReadyStatus(requestId, apiKey)
                 } else {
                     currentStatus
                 }
@@ -277,7 +286,8 @@ class MediaRepositoryImpl(
 
     /** Seeds songs + stories into the media_items table. */
     private suspend fun seedMedia() {
-        val entities = (FinalData.songs + FinalData.stories + FinalData.poems).map { it.toEntity() }
+        val entities = (FinalData.songs + FinalData.stories + FinalData.poems + FinalData.podcasts)
+            .map { it.toEntity() }
         mediaDao.insertMedia(entities)
     }
 
@@ -291,7 +301,8 @@ class MediaRepositoryImpl(
 
     /** Seeds song challenges parsed from the question and answer Markdown assets. */
     private suspend fun seedSongActivities() = withContext(Dispatchers.IO) {
-        val entities = FinalData.songActivities(storyAssetReader).map { it.toEntity() }
+        val entities = (FinalData.songActivities(storyAssetReader) +
+            FinalData.podcastActivities(storyAssetReader)).map { it.toEntity() }
         mediaDao.insertSongActivities(entities)
     }
 }

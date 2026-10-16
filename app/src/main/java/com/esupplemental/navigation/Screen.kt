@@ -33,6 +33,9 @@ sealed class Screen(val route: String) {
     object PoemPlayer : Screen("poem_player/{mediaId}") {
         fun createRoute(mediaId: String) = "poem_player/$mediaId"
     }
+    object PodcastPlayer : Screen("podcast_player/{mediaId}") {
+        fun createRoute(mediaId: String) = "podcast_player/$mediaId"
+    }
     object StoryExercise : Screen("story_exercise/{mediaId}") {
         fun createRoute(mediaId: String) = "story_exercise/$mediaId"
     }
@@ -41,6 +44,9 @@ sealed class Screen(val route: String) {
     }
     object SongExercise : Screen("song_exercise/{mediaId}") {
         fun createRoute(mediaId: String) = "song_exercise/$mediaId"
+    }
+    object PodcastExercise : Screen("podcast_exercise/{mediaId}") {
+        fun createRoute(mediaId: String) = "podcast_exercise/$mediaId"
     }
     object NoteTaking : Screen("note_taking/{noteId}") {
         fun createRoute(noteId: String = "new") = "note_taking/$noteId"

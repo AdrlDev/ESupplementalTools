@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.AutoStories
 import androidx.compose.material.icons.rounded.MusicNote
+import androidx.compose.material.icons.rounded.Podcasts
 import androidx.compose.material.icons.rounded.Quiz
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarBorder
@@ -97,6 +98,7 @@ fun PlayfulQuizHistoryItem(
                         imageVector = when (quizType) {
                             MediaType.SONG -> Icons.Rounded.MusicNote
                             MediaType.STORY, MediaType.POEM -> Icons.Rounded.AutoStories
+                            MediaType.PODCAST -> Icons.Rounded.Podcasts
                             null -> Icons.Rounded.Quiz
                         },
                         contentDescription = null,
@@ -118,6 +120,7 @@ fun PlayfulQuizHistoryItem(
                         text = when (quizType) {
                             MediaType.SONG -> "Song Quiz Challenge"
                             MediaType.POEM -> "Poem Quiz Quest"
+                            MediaType.PODCAST -> "Podcast Challenge"
                             MediaType.STORY -> "Story Quiz Quest"
                             null -> "Quiz Challenge"
                         },

@@ -4,6 +4,7 @@ import com.esupplemental.data.model.SongActivity
 
 data class SongExerciseUiState(
     val mediaId: String = "",
+    val isPodcast: Boolean = false,
     val activity: SongActivity? = null,
     val fillBlankAnswers: Map<String, String> = emptyMap(),   // itemId -> userAnswer
     val selectedMessageOption: Int = -1,
@@ -16,5 +17,8 @@ data class SongExerciseUiState(
     val total: Int = 0,
     val userAnswersList: List<String> = emptyList(),
     val correctAnswersList: List<String> = emptyList(),
-    val resultId: Long? = null
+    val resultId: Long? = null,
+    val loadingAudioIds: Set<String> = emptySet(),
+    val playingAudioId: String? = null,
+    val audioError: String? = null
 )

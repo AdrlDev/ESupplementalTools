@@ -106,6 +106,7 @@ val appModule = module {
             .addMigrations(AppDatabase.MIGRATION_15_16)
             .addMigrations(AppDatabase.MIGRATION_16_17)
             .addMigrations(AppDatabase.MIGRATION_17_18)
+            .addMigrations(AppDatabase.MIGRATION_19_20)
             .fallbackToDestructiveMigration(true)
             .build()
     }
@@ -157,7 +158,7 @@ val appModule = module {
     viewModel { LibraryViewModel(get()) }
     viewModel { PlayerViewModel(get(), get(), get(), get(), get()) }
     viewModel { StoryExerciseViewModel(get(), get(), get(), androidApplication()) }
-    viewModel { SongExerciseViewModel(get(), get()) }
+    viewModel { SongExerciseViewModel(get(), get(), get()) }
     viewModel { QuizResultViewModel(get()) }
     viewModel { ProgressViewModel(get(), get(), get(), get(), get()) }
     viewModel { (gameId: String, mediaId: String?) ->

@@ -28,6 +28,7 @@ interface MediaRepository {
     suspend fun generateAudioForText(
         id: String,
         title: String? = null,
-        text: String
+        text: String,
+        forceRefresh: Boolean = false
     ): Result<AudioStory>
 }

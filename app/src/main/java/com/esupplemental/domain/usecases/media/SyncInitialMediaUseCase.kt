@@ -70,6 +70,8 @@ class SyncInitialMediaUseCase(
         // 4. Prefetch Story Activity Audio (All activities)
         val activities = repository.getAllStoryActivities()
         val allStories = repository.getMediaList(MediaType.STORY).first()
+        val allPoems = repository.getMediaList(MediaType.POEM).first()
+        val allPodcasts = repository.getMediaList(MediaType.PODCAST).first()
 
         // Initialize game banks from story assets
         SpeedTyperBank.init(application, allStories)
@@ -185,6 +187,70 @@ class SyncInitialMediaUseCase(
 
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+
+        // 8. Prefetch full poem audio and every poem question in the background.
+        // Poem audio is generated from the poem body only; quiz content is never
+        // included in the narration. Force refresh once for this work version so
+        // stale server URLs from earlier installs are replaced.
+        allPoems.forEach { poem ->
+            try {
+                val markdown = StoryLoader.load(application, poem.transcript)
+                val poemBody = com.esupplemental.domain.utils.PoemActivityFactory.extractTranscript(markdown)
+                repository.generateAudioForText(
+                    id = poem.id,
+                    title = poem.title,
+                    text = poemBody,
+                    forceRefresh = true
+                ).getOrThrow()
+
+                repository.getStoryActivity(poem.id)?.multipleChoiceQuestions?.forEach { question ->
+                    runCatching {
+                        repository.generateAudioForText(
+                            id = question.id,
+                            title = "Poem question",
+                            text = question.question,
+                            forceRefresh = true
+                        ).getOrThrow()
+                    }.onFailure { throwable ->
+                        Log.e("AudioPrefetch", "Failed poem question audio: ${question.id}", throwable)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("AudioPrefetch", "Failed poem audio: ${poem.id}", e)
+            }
+        }
+
+        // 9. Prefetch podcast challenge question audio. Podcast videos remain
+        // remote video sources; only their challenge prompts use generated audio.
+        allPodcasts.forEach { podcast ->
+            try {
+                val activity = repository.getSongActivity(podcast.id) ?: return@forEach
+                activity.fillBlanks.forEach { item ->
+                    runCatching {
+                        repository.generateAudioForText(
+                            id = item.id,
+                            title = "Podcast question",
+                            text = item.sentence.replace("___", "blank"),
+                            forceRefresh = true
+                        ).getOrThrow()
+                    }.onFailure { throwable ->
+                        Log.e("AudioPrefetch", "Failed podcast question audio: ${item.id}", throwable)
+                    }
+                }
+                runCatching {
+                    repository.generateAudioForText(
+                        id = activity.messageQuestion.id,
+                        title = "Podcast question",
+                        text = activity.messageQuestion.question,
+                        forceRefresh = true
+                    ).getOrThrow()
+                }.onFailure { throwable ->
+                    Log.e("AudioPrefetch", "Failed podcast message audio: ${activity.messageQuestion.id}", throwable)
+                }
+            } catch (e: Exception) {
+                Log.e("AudioPrefetch", "Failed podcast audio: ${podcast.id}", e)
             }
         }
     }

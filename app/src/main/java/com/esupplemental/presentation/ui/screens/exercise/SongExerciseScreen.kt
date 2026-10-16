@@ -20,6 +20,8 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material.icons.rounded.RadioButtonUnchecked
+import androidx.compose.material.icons.rounded.Pause
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -67,6 +69,12 @@ fun SongExerciseScreen(
             viewModel.dismissSubmissionError()
         }
     }
+    LaunchedEffect(state.audioError) {
+        state.audioError?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.dismissAudioError()
+        }
+    }
 
     SongExerciseContent(
         state = state,
@@ -74,6 +82,7 @@ fun SongExerciseScreen(
         onBack = onBack,
         onFillBlankAnswerChange = viewModel::onFillBlankAnswerChange,
         onMessageOptionSelected = viewModel::onMessageOptionSelected,
+        onPlayQuestionAudio = viewModel::playPodcastQuestionAudio,
         onSubmit = viewModel::submit,
         onViewResults = onViewResults
     )
@@ -87,6 +96,7 @@ private fun SongExerciseContent(
     onBack: () -> Unit,
     onFillBlankAnswerChange: (String, String) -> Unit,
     onMessageOptionSelected: (Int) -> Unit,
+    onPlayQuestionAudio: (String, String) -> Unit,
     onSubmit: () -> Unit,
     onViewResults: (Int, Int, Long) -> Unit
 ) {
@@ -98,8 +108,14 @@ private fun SongExerciseContent(
                 TopAppBar(
                     title = {
                         Column {
-                            Text("Song Challenge", fontWeight = FontWeight.ExtraBold)
-                            Text("Listen, remember, and answer", style = MaterialTheme.typography.labelSmall)
+                            Text(
+                                if (state.isPodcast) "Podcast Challenge" else "Song Challenge",
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                            Text(
+                                if (state.isPodcast) "Watch, remember, and answer" else "Listen, remember, and answer",
+                                style = MaterialTheme.typography.labelSmall
+                            )
                         }
                     },
                     navigationIcon = {
@@ -128,7 +144,11 @@ private fun SongExerciseContent(
                     ) {
                         item {
                             Text(
-                                "Complete the blanks from the song, then choose its message.",
+                                if (state.isPodcast) {
+                                    "Complete the blanks from the podcast, then choose its message."
+                                } else {
+                                    "Complete the blanks from the song, then choose its message."
+                                },
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -145,7 +165,12 @@ private fun SongExerciseContent(
                                 isWrong = state.isSubmitted && normalize(state.fillBlankAnswers[item.id].orEmpty()) != normalize(item.answer),
                                 correctAnswer = item.answer,
                                 onAnswerChange = { onFillBlankAnswerChange(item.id, it) },
-                                itemNumber = index + 1
+                                itemNumber = index + 1,
+                                onPlayAudio = if (state.isPodcast) {
+                                    { onPlayQuestionAudio(item.id, item.sentence) }
+                                } else null,
+                                isAudioLoading = item.id in state.loadingAudioIds,
+                                isAudioPlaying = item.id == state.playingAudioId
                             )
                         }
                         item {
@@ -154,7 +179,8 @@ private fun SongExerciseContent(
                         item {
                             MessageQuestionCard(
                                 state = state,
-                                onOptionSelected = onMessageOptionSelected
+                                onOptionSelected = onMessageOptionSelected,
+                                onPlayAudio = if (state.isPodcast) onPlayQuestionAudio else null
                             )
                         }
                         item {
@@ -182,7 +208,8 @@ private fun SongExerciseContent(
 @Composable
 private fun MessageQuestionCard(
     state: SongExerciseUiState,
-    onOptionSelected: (Int) -> Unit
+    onOptionSelected: (Int) -> Unit,
+    onPlayAudio: ((String, String) -> Unit)? = null
 ) {
     val question = state.activity?.messageQuestion ?: return
     Surface(
@@ -191,7 +218,28 @@ private fun MessageQuestionCard(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(question.question, fontWeight = FontWeight.Bold)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(question.question, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                if (onPlayAudio != null) {
+                    IconButton(
+                        onClick = { onPlayAudio(question.id, question.question) },
+                        enabled = question.id !in state.loadingAudioIds
+                    ) {
+                        if (question.id in state.loadingAudioIds) {
+                            CircularProgressIndicator(modifier = Modifier.width(20.dp).height(20.dp), strokeWidth = 2.dp)
+                        } else {
+                            Icon(
+                                imageVector = if (question.id == state.playingAudioId) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                                contentDescription = if (question.id == state.playingAudioId) "Pause question audio" else "Play question audio"
+                            )
+                        }
+                    }
+                }
+            }
             question.options.forEachIndexed { index, option ->
                 val selected = state.selectedMessageOption == index
                 val correct = state.isSubmitted && index == question.correctIndex

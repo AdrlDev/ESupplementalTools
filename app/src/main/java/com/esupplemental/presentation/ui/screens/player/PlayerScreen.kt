@@ -281,6 +281,16 @@ fun PlayerScreenContent(
     onSeekMs: (Long) -> Unit,
     onStartExercise: ((String) -> Unit)?
 ) {
+    if (item.type == MediaType.PODCAST) {
+        PodcastPlayerContent(
+            item = item,
+            accentColor = accentColor,
+            onBack = onBack,
+            onStartExercise = onStartExercise
+        )
+        return
+    }
+
     var showTranscript by remember { mutableStateOf(false) }
     val spacing = MaterialTheme.spacing
 
@@ -332,6 +342,55 @@ fun PlayerScreenContent(
             onSeekMs = onSeekMs,
             onStartExercise = onStartExercise
         )
+    }
+}
+
+@Composable
+private fun PodcastPlayerContent(
+    item: MediaItem,
+    accentColor: Color,
+    onBack: () -> Unit,
+    onStartExercise: ((String) -> Unit)?
+) {
+    var playbackFinished by remember(item.id) { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 24.dp)
+    ) {
+        PlayerTopBar(
+            title = item.title,
+            onBack = onBack,
+            accentColor = MaterialTheme.colorScheme.background
+        )
+
+        item.videoUrl?.let { url ->
+            PodcastVideoPlayer(
+                videoUrl = url,
+                modifier = Modifier.padding(horizontal = 16.dp),
+                onPlaybackFinished = { playbackFinished = true }
+            )
+        }
+
+        Column(modifier = Modifier.padding(24.dp)) {
+            Text(
+                text = item.title,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            item.singer?.let { source ->
+                Text(
+                    text = source,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            if (playbackFinished && onStartExercise != null) {
+                Spacer(Modifier.height(20.dp))
+                StartChallengeButton(accentColor) { onStartExercise(item.id) }
+            }
+        }
     }
 }
 

@@ -47,6 +47,7 @@ object DataMapper {
             thumbnailUrl = this.thumbnailUrl,
             audioRes = this.audioRes ?: 0, // Map audio resource
             audioUrl = this.audioUrl,
+            videoUrl = this.videoUrl,
             transcript = this.transcript,
             moral = this.moral
         )
@@ -64,6 +65,7 @@ object DataMapper {
             thumbnailUrl = this.thumbnailUrl,
             audioRes = if (this.audioRes == 0) null else this.audioRes, // Map back to Domain
             audioUrl = this.audioUrl,
+            videoUrl = this.videoUrl,
             transcript = this.transcript,
             moral = this.moral
         )

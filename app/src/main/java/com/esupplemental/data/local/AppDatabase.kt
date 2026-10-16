@@ -19,7 +19,7 @@ import com.esupplemental.data.local.entity.*
         SongActivityEntity::class, StoryActivityEntity::class, UserStatsEntity::class,
         QuizHistoryEntity::class, GameItemEntity::class, AudioStoryEntity::class
     ],
-    version = 19,
+    version = 20,
     exportSchema = false          // set to true and provide a schema dir in prod
 )
 @TypeConverters(NoteConverters::class, MediaConverters::class, SongActivityConverters::class,
@@ -92,6 +92,12 @@ abstract class AppDatabase : RoomDatabase() {
                     "CREATE INDEX IF NOT EXISTS index_notes_userId_createdAt " +
                         "ON notes(userId, createdAt)"
                 )
+            }
+        }
+
+        val MIGRATION_19_20 = object : Migration(19, 20) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE media_items ADD COLUMN videoUrl TEXT")
             }
         }
     }

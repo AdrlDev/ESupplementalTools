@@ -38,7 +38,7 @@ class AudioPrefetchWorker(
     companion object {
         // Bump when a release adds new prefetched content so existing installs
         // enqueue the new one-time queue. Stable media IDs still prevent repeat API use.
-        private const val CONTENT_VERSION = 2
+        private const val CONTENT_VERSION = 3
         const val WORK_NAME = "AudioPrefetchWork_v$CONTENT_VERSION"
     }
 }

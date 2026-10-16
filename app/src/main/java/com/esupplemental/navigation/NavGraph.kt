@@ -108,6 +108,7 @@ fun AppNavGraph(
                 onSongsClick = { navController.navigate("media_list/song") },
                 onStoriesClick = { navController.navigate("media_list/story") },
                 onPoemsClick = { navController.navigate("media_list/poem") },
+                onPodcastsClick = { navController.navigate("media_list/podcast") },
                 onNoteToolClick = {
                     navController.navigate(Screen.NoteList.route)
                 },
@@ -197,6 +198,7 @@ fun AppNavGraph(
                 onSongClick = { navController.navigate(Screen.SongPlayer.createRoute(it)) },
                 onStoryClick = { navController.navigate(Screen.StoryPlayer.createRoute(it)) },
                 onPoemClick = { navController.navigate(Screen.PoemPlayer.createRoute(it)) },
+                onPodcastClick = { navController.navigate(Screen.PodcastPlayer.createRoute(it)) },
                 onNoteClick = { navController.navigate(Screen.NoteTaking.createRoute(it)) }
             )
         }
@@ -242,6 +244,7 @@ fun AppNavGraph(
             val type = when (typeArg) {
                 "song" -> MediaType.SONG
                 "poem" -> MediaType.POEM
+                "podcast" -> MediaType.PODCAST
                 else -> MediaType.STORY
             }
 
@@ -251,6 +254,7 @@ fun AppNavGraph(
                     val route = when (type) {
                         MediaType.SONG -> Screen.SongPlayer.createRoute(it)
                         MediaType.POEM -> Screen.PoemPlayer.createRoute(it)
+                        MediaType.PODCAST -> Screen.PodcastPlayer.createRoute(it)
                         MediaType.STORY -> Screen.StoryPlayer.createRoute(it)
                     }
                     navController.navigate(route)
@@ -293,6 +297,22 @@ fun AppNavGraph(
             )
         }
 
+        composable(
+            route = Screen.PodcastExercise.route,
+            arguments = listOf(navArgument("mediaId") { type = NavType.StringType })
+        ) { backStack ->
+            val mediaId = backStack.arguments?.getString("mediaId") ?: return@composable
+            SongExerciseScreen(
+                mediaId = mediaId,
+                onViewResults = { score, total, resultId ->
+                    navController.navigate(
+                        Screen.QuizResult.createRoute(score, total, resultId, mediaId, MediaType.PODCAST)
+                    )
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
         // ── Story player + exercise ───────────────────────────────────────────
 
         composable(
@@ -323,6 +343,22 @@ fun AppNavGraph(
             PlayerScreen(
                 mediaId = mediaId,
                 onStartExercise = { navController.navigate(Screen.PoemExercise.createRoute(it)) },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Screen.PodcastPlayer.route,
+            arguments = listOf(navArgument("mediaId") { type = NavType.StringType }),
+            enterTransition = { fadeIn(tween(180)) },
+            exitTransition = { fadeOut(tween(180)) },
+            popEnterTransition = { fadeIn(tween(180)) },
+            popExitTransition = { fadeOut(tween(180)) }
+        ) { backStack ->
+            val mediaId = backStack.arguments?.getString("mediaId") ?: return@composable
+            PlayerScreen(
+                mediaId = mediaId,
+                onStartExercise = { navController.navigate(Screen.PodcastExercise.createRoute(it)) },
                 onBack = { navController.popBackStack() }
             )
         }
@@ -402,6 +438,7 @@ fun AppNavGraph(
                     val retryRoute = when (exerciseType) {
                         MediaType.SONG.name -> Screen.SongExercise.createRoute(mediaId)
                         MediaType.POEM.name -> Screen.PoemExercise.createRoute(mediaId)
+                        MediaType.PODCAST.name -> Screen.PodcastExercise.createRoute(mediaId)
                         else -> Screen.StoryExercise.createRoute(mediaId)
                     }
                     navController.navigate(retryRoute) {

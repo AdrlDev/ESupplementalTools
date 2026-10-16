@@ -11,9 +11,15 @@ object SongActivityFactory {
     private val markdownEmphasis = Regex("""\*\*(.*?)\*\*""")
     // Some assets use a single underscore while others use two or more.
     private val blankMarkers = Regex("_+")
+    private val maskedAnswer = Regex("(?i)[a-z]*_+[a-z]*(?:\\s+[a-z]*_+[a-z]*)*")
     private val whitespace = Regex("\\s+")
 
-    fun create(mediaId: String, questionsMarkdown: String, answersMarkdown: String): SongActivity {
+    fun create(
+        mediaId: String,
+        questionsMarkdown: String,
+        answersMarkdown: String,
+        oneBlankPerQuestion: Boolean = false
+    ): SongActivity {
         val questionSections = sections(questionsMarkdown)
         val answerSections = sections(answersMarkdown)
         val fillQuestions = numberedBlocks.findAll(questionSections.first)
@@ -25,6 +31,24 @@ object SongActivityFactory {
 
         require(fillQuestions.isNotEmpty()) { "Song asset for $mediaId has no fill-in questions" }
         val fillBlanks = buildList {
+            if (oneBlankPerQuestion) {
+                fillQuestions.forEachIndexed { index, question ->
+                    val answer = fillAnswers.getOrNull(index)
+                        ?: error("Song asset for $mediaId has fewer answers than questions")
+                    add(
+                        FillBlankItem(
+                            id = "${mediaId}_fill_${size + 1}",
+                            sentence = maskedAnswer.replace(question, "___"),
+                            answer = answer
+                        )
+                    )
+                }
+                require(fillQuestions.size == fillAnswers.size) {
+                    "Song asset for $mediaId has answers that do not match its questions"
+                }
+                return@buildList
+            }
+
             var answerIndex = 0
             fillQuestions.forEach { question ->
                 val markers = blankMarkers.findAll(question).toList()

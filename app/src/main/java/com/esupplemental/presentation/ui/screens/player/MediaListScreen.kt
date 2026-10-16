@@ -43,6 +43,7 @@ fun MediaListScreen(
     val state by viewModel.uiState.collectAsState()
     val isSong = type == MediaType.SONG
     val isPoem = type == MediaType.POEM
+    val isPodcast = type == MediaType.PODCAST
     val headerColor = if (isSong) MaterialTheme.colorScheme.primary
     else MaterialTheme.colorScheme.secondary
 
@@ -53,6 +54,7 @@ fun MediaListScreen(
             headerColor = headerColor,
             isSong = isSong,
             isPoem = isPoem,
+            isPodcast = isPodcast,
             searchQuery = state.searchQuery,
             filteredList = state.filteredList,
             onSearchChange = { viewModel.onSearchQueryChange(it) },
@@ -66,6 +68,7 @@ fun MediaListScreen(
 fun MediaListContent(
     isSong: Boolean,
     isPoem: Boolean,
+    isPodcast: Boolean = false,
     headerColor: Color,
     searchQuery: String,
     filteredList: List<MediaItem>,
@@ -75,9 +78,14 @@ fun MediaListContent(
 ) {
     val onHeader = if (isSong) MaterialTheme.colorScheme.onPrimary
     else MaterialTheme.colorScheme.onSecondary
-    val listLabel = when { isSong -> "Songs"; isPoem -> "Poems"; else -> "Stories" }
-    val instructionText = when { isSong -> "Choose a song to listen"; isPoem -> "Choose a poem to read"; else -> "Choose a story to read" }
-    val searchHint = when { isSong -> "Search songs…"; isPoem -> "Search poems…"; else -> "Search stories…" }
+    val listLabel = when { isSong -> "Songs"; isPoem -> "Poems"; isPodcast -> "Podcasts"; else -> "Stories" }
+    val instructionText = when {
+        isSong -> "Choose a song to listen"
+        isPoem -> "Choose a poem to read"
+        isPodcast -> "Choose a podcast to watch"
+        else -> "Choose a story to read"
+    }
+    val searchHint = when { isSong -> "Search songs…"; isPoem -> "Search poems…"; isPodcast -> "Search podcasts…"; else -> "Search stories…" }
 
     var searchVisible by remember { mutableStateOf(false) }
     val keyboard = LocalSoftwareKeyboardController.current

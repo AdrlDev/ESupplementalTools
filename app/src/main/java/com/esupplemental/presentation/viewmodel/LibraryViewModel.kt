@@ -36,6 +36,7 @@ class LibraryViewModel(
             0 -> MediaType.SONG
             1 -> MediaType.STORY
             2 -> MediaType.POEM
+            3 -> MediaType.PODCAST
             else -> null
         }
     }

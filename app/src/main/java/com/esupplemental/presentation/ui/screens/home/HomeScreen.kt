@@ -27,6 +27,7 @@ fun HomeScreen(
     onSongsClick: () -> Unit,
     onStoriesClick: () -> Unit,
     onPoemsClick: () -> Unit,
+    onPodcastsClick: () -> Unit,
     onNoteToolClick: () -> Unit,
     onGameClick: () -> Unit
 ) {
@@ -37,6 +38,7 @@ fun HomeScreen(
         onSongsClick = onSongsClick,
         onStoriesClick = onStoriesClick,
         onPoemsClick = onPoemsClick,
+        onPodcastsClick = onPodcastsClick,
         onNoteToolClick = onNoteToolClick,
         onGameClick = onGameClick
     )
@@ -48,6 +50,7 @@ fun HomeScreenContent(
     onSongsClick: () -> Unit,
     onStoriesClick: () -> Unit,
     onPoemsClick: () -> Unit,
+    onPodcastsClick: () -> Unit,
     onNoteToolClick: () -> Unit,
     onGameClick: () -> Unit
 ) {
@@ -106,6 +109,14 @@ fun HomeScreenContent(
             )
             Spacer(Modifier.height(spacing.small))
             ActivityCard(
+                title = "Podcasts",
+                description = "Watch podcasts and take listening challenges",
+                icon = Icons.Rounded.Podcasts,
+                containerColor = colorScheme.primary,
+                onClick = onPodcastsClick
+            )
+            Spacer(Modifier.height(spacing.small))
+            ActivityCard(
                 title = "Note-Taking Tool",
                 description = "Organize your ideas with structured notes",
                 icon = Icons.Rounded.Edit,
@@ -138,6 +149,7 @@ fun HomeScreenPreview() {
             onSongsClick = {},
             onStoriesClick = {},
             onPoemsClick = {},
+            onPodcastsClick = {},
             onNoteToolClick = {},
             onGameClick = {}
         )

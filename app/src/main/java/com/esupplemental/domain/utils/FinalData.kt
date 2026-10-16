@@ -240,6 +240,91 @@ class FinalData {
             MediaItem("p-16", "The River's Song", singer = "Sofia Mae Villanueva", type = MediaType.POEM, durationSeconds = 0, transcript = "poems/the_rivers_song.md")
         )
 
+        // Podcasts use video playback and song-style, transcript-free assessments.
+        // The Drive URLs are resolved to stream URLs by the video player at runtime.
+        val podcasts = listOf(
+            MediaItem(
+                id = "podcast-1",
+                title = "Time Management",
+                singer = "English Learning Podcast",
+                type = MediaType.PODCAST,
+                durationSeconds = 0,
+                videoUrl = "https://drive.google.com/file/d/1X_Sk6aipADbi-1HZ5IruhNMxGLB7a9YD/view?usp=sharing"
+            ),
+            MediaItem(
+                id = "podcast-2",
+                title = "Social Anxiety",
+                singer = "English Learning Podcast",
+                type = MediaType.PODCAST,
+                durationSeconds = 0,
+                videoUrl = "https://drive.google.com/file/d/1KmHfjgM7kCQlz8RorGXFy5cY9qw1p5Yb/view?usp=sharing"
+            ),
+            MediaItem(
+                id = "podcast-3",
+                title = "Elementary English Learning",
+                singer = "English Learning Podcast",
+                type = MediaType.PODCAST,
+                durationSeconds = 0,
+                videoUrl = "https://drive.google.com/file/d/1e-bg-zG8p5vMMtPTaWda03_hpkvI0LbD/view?usp=sharing"
+            ),
+            MediaItem(
+                id = "podcast-4",
+                title = "Emotions",
+                singer = "English Learning Podcast",
+                type = MediaType.PODCAST,
+                durationSeconds = 0,
+                videoUrl = "https://drive.google.com/file/d/1LUsrtVlXFhZPoeM2DXOx9O_AwpVyBw7v/view?usp=sharing"
+            ),
+            MediaItem(
+                id = "podcast-5",
+                title = "Artificial Intelligence",
+                singer = "English Learning Podcast",
+                type = MediaType.PODCAST,
+                durationSeconds = 0,
+                videoUrl = "https://drive.google.com/file/d/1yJoaQhAFwGE1r-pLERlf4UurWMjb8TNI/view?usp=sharing"
+            ),
+            MediaItem(
+                id = "podcast-6",
+                title = "Allergies",
+                singer = "Brains On",
+                type = MediaType.PODCAST,
+                durationSeconds = 0,
+                videoUrl = "https://drive.google.com/file/d/1ULZTbYEu3B0XicoaxD451eius345eU28/view?usp=sharing"
+            ),
+            MediaItem(
+                id = "podcast-7",
+                title = "What If There Were No Animals?",
+                singer = "Tumble Science Podcast",
+                type = MediaType.PODCAST,
+                durationSeconds = 0,
+                videoUrl = "https://drive.google.com/file/d/1jWl4v6Zjl7s2DV9WNfg-V13f4vcMR3t5/view?usp=sharing"
+            ),
+            MediaItem(
+                id = "podcast-8",
+                title = "Books vs Movies",
+                singer = "Smash Boom Best",
+                type = MediaType.PODCAST,
+                durationSeconds = 0,
+                videoUrl = "https://drive.google.com/file/d/13rUi7k6O6zXTS7E7tUKuiSfNioX73J7R/view?usp=sharing"
+            ),
+            MediaItem(
+                id = "podcast-9",
+                title = "Civics 101",
+                singer = "Civics Podcast",
+                type = MediaType.PODCAST,
+                durationSeconds = 0,
+                videoUrl = "https://drive.google.com/file/d/1jnCEIqCto49A__aSivisRjDcMIAJu3p-/view?usp=sharing"
+            ),
+            MediaItem(
+                id = "podcast-10",
+                title = "Three Legendary Pranks",
+                singer = "Stuff You Missed in History Class",
+                type = MediaType.PODCAST,
+                durationSeconds = 0,
+                videoUrl = "https://drive.google.com/file/d/1mu2rJqZWNdTTFiWrSgDw2px7E1SskcUS/view?usp=sharing"
+            )
+        )
+
         // ══════════════════════════════════════════════════════════════════════════
         // STORY ACTIVITIES
         // ══════════════════════════════════════════════════════════════════════════
@@ -271,6 +356,19 @@ class FinalData {
             "s-10" to ("songs/questions/07_salamat_questions.md" to "songs/answers/07_salamat_answers.md")
         )
 
+        private val podcastActivityAssets = mapOf(
+            "podcast-1" to ("podcasts/questions/time_management.md" to "podcasts/answers/time_management.md"),
+            "podcast-2" to ("podcasts/questions/social_anxiety.md" to "podcasts/answers/social_anxiety.md"),
+            "podcast-3" to ("podcasts/questions/elementary_english.md" to "podcasts/answers/elementary_english.md"),
+            "podcast-4" to ("podcasts/questions/emotions.md" to "podcasts/answers/emotions.md"),
+            "podcast-5" to ("podcasts/questions/artificial_intelligence.md" to "podcasts/answers/artificial_intelligence.md"),
+            "podcast-6" to ("podcasts/questions/brains_on_allergies.md" to "podcasts/answers/brains_on_allergies.md"),
+            "podcast-7" to ("podcasts/questions/tumble_animals.md" to "podcasts/answers/tumble_animals.md"),
+            "podcast-8" to ("podcasts/questions/books_vs_movies.md" to "podcasts/answers/books_vs_movies.md"),
+            "podcast-9" to ("podcasts/questions/civics_101.md" to "podcasts/answers/civics_101.md"),
+            "podcast-10" to ("podcasts/questions/history_pranks.md" to "podcasts/answers/history_pranks.md")
+        )
+
         fun songActivities(loadAsset: (String) -> String): List<SongActivity> =
             songs.mapNotNull { song ->
                 val assets = songActivityAssets[song.id] ?: return@mapNotNull null
@@ -279,6 +377,19 @@ class FinalData {
                         mediaId = song.id,
                         questionsMarkdown = loadAsset(assets.first),
                         answersMarkdown = loadAsset(assets.second)
+                    )
+            }.getOrNull()
+            }
+
+        fun podcastActivities(loadAsset: (String) -> String): List<SongActivity> =
+            podcasts.mapNotNull { podcast ->
+                val assets = podcastActivityAssets[podcast.id] ?: return@mapNotNull null
+                runCatching {
+                    SongActivityFactory.create(
+                        mediaId = podcast.id,
+                        questionsMarkdown = loadAsset(assets.first),
+                        answersMarkdown = loadAsset(assets.second),
+                        oneBlankPerQuestion = true
                     )
                 }.getOrNull()
             }
